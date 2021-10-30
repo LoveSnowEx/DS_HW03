@@ -15,27 +15,31 @@ int readline() {
 	return strlen(buf);
 }
 
-char main_hint[] = "1.  輸入多項式\n"
-				"2.  顯示多項式\n"
-				"3.  顯示多項式指定次方之係數\n"
-				"4.  新增多項式之非零項\n"
-				"5.  移除多項式之非零項\n"
-				"6.  相加多項式\n"
-				"7.  相減多項式\n"
-				"8.  相乘多項式\n"
-				"9.  相除多項式\n"
-				"10. 結束\n"
-				"請輸入您要執行之動作(1˜10)：";
+char main_hint[] = "1.  新增多項式\n"
+                    "2.  顯示多項式\n"
+				    "3.  顯示多項式指定次方之係數\n"
+				    "4.  新增多項式之非零項\n"
+				    "5.  移除多項式之非零項\n"
+				    "6.  相加多項式\n"
+				    "7.  相減多項式\n"
+				    "8.  相乘多項式\n"
+				    "9.  相除多項式\n"
+		    		"10. 結束\n"
+		    		"請輸入您要執行之動作(1˜10)：";
 
 
-list<tuple<Poly, string>> polys;
+list<pair<Poly, string>> polys;
 
 Poly &get_poly(int idx) {
-	return get<0>(*next(polys.begin(), idx));
+	return next(polys.begin(), idx)->first;
 }
 
 string get_polyname(int idx) {
-	return get<1>(*next(polys.begin(), idx));
+	return next(polys.begin(), idx)->second;
+}
+
+void save_poly(Poly poly) {
+    polys.push_back(poly);
 }
 
 void enter_poly() {
@@ -43,9 +47,9 @@ void enter_poly() {
 		printf("請輸入一個多項式(ex: 3xˆ2+1)：");
 		while(readline() == 0);
 		try {
-			Poly poly = buf;
-			// auto p = make_pair(poly, string(""));
-			// polys.push_back(p);
+			Poly poly = Poly(buf);
+            auto p = make_pair(poly, string(""));
+            save_poly(p);
 			break;
 		}
 		catch(const int fail) {
@@ -57,11 +61,10 @@ void enter_poly() {
 		}
 	}
 }
-/*
 void show_polys() {
 	printf("顯示多項式列表: \n");
 	for(int i = 0; i < polys.size(); i++) {
-		printf("(%d) %s [%s]\n", i, get_poly(i).str().c_str(), get_polyname(i));
+		printf("(%d) \"%s\" : %s\n", i+1, get_polyname(i).c_str(), get_poly(i).str().c_str());
 	}
 	printf("\n");
 }
@@ -71,53 +74,110 @@ void show_coef() {
 		printf("目前沒有任何多項式, 請先新增多項式\n");
 		return;
 	}
+    int n;
 	do {
 		show_polys();
-		printf("請選擇目標多項式(1~%ld): \n", polys.size());
+		printf("請選擇目標多項式(1~%ld):", polys.size());
 		while(readline() == 0);
-		int n = strtol(buf, NULL, 10);
-		if(n > 0 && n <= polys.size()) {
-			printf("請輸入欲顯示係數之項的次方\n");
-			while(readline() == 0);
-			int expo = strtol(buf, NULL, 10);
-			printf("%d次項的係數為: %d\n", expo, get_poly(n-1)[expo]);
-			break;
-		}
-		else {
-			printf("超出輸入範圍,請重新輸入\n");
-		}
+		n = strtol(buf, NULL, 10);
+		if(n > 0 && n <= polys.size()) break;
+
+        printf("超出輸入範圍,請重新輸入\n");
 	} while(1);
+
+    printf("請輸入欲顯示係數之項的次方\n");
+    while(readline() == 0);
+    int expo = strtol(buf, NULL, 10);
+    printf("%d 次項的係數為: %d\n", expo, get_poly(n-1)[expo]);
 }
+
 
 void add_term() {
 	if(polys.size() == 0) {
 		printf("目前沒有任何多項式, 請先新增多項式\n");
 		return;
 	}
+    int n;
 	do {
 		show_polys();
-		printf("請選擇目標多項式(1~%ld): \n", polys.size());
+		printf("請選擇目標多項式(1~%ld):", polys.size());
 		while(readline() == 0);
-		int n = strtol(buf, NULL, 10);
-		if(n <= 0 || n > polys.size()) {
-			printf("超出輸入範圍,請重新輸入\n");
-			continue;
-		}
-		else {
-			printf("請輸入欲新增之非零項的係數及次方(如3x^2需輸入 \"3 2\"): \n");
-			while(readline() == 0);
-			char *cur = buf;
-			int coef = strtol(cur, &cur, 10), expo = strtol(cur, &cur, 10);
-			Poly &target = get_poly(n-1);
-			target.add_term(coef, expo);
-			printf("多項式已修改成: %s\n", target.str().c_str());
-			break;
-		}
+		n = strtol(buf, NULL, 10);
+		if(n > 0 && n <= polys.size()) break;
+
+        printf("超出輸入範圍,請重新輸入\n");
 	} while(1);
+
+    printf("請輸入欲新增之非零項的係數及次方(如3x^2需輸入 \"3 2\"):");
+    while(readline() == 0);
+    char *cur = buf;
+    int coef = strtol(cur, &cur, 10), expo = strtol(cur, &cur, 10);
+    Poly &target = get_poly(n-1);
+    target.add_term(coef, expo);
+    printf("多項式已修改成: %s\n", target.str().c_str());
 }
-*/
-// void (*functions[3])() = {enter_poly, show_polys, show_coef};
-void (*functions[1])() = {enter_poly};
+
+void remove_term() {
+    if(polys.size() == 0) {
+        printf("目前沒有任何多項式, 請先新增多項式\n");
+        return;
+    }
+    int n;
+    do {
+        show_polys();
+        printf("請選擇目標多項式(1~%ld):", polys.size());
+        while(readline() == 0);
+        n = strtol(buf, NULL, 10);
+        if(n > 0 && n <= polys.size()) break;
+
+        printf("超出輸入範圍,請重新輸入\n");
+    } while(1);
+
+    printf("請輸入欲新增之非零項的次方(如x^2需輸入 \"2\"):");
+    while(readline() == 0);
+    char *cur = buf;
+    int expo = strtol(cur, &cur, 10);
+    Poly &target = get_poly(n-1);
+    target.remove_term(expo);
+    printf("多項式已修改成: %s\n", target.str().c_str());
+}
+
+void poly_add() {
+    if(polys.size() == 0) {
+        printf("目前沒有任何多項式, 請先新增多項式\n");
+        return;
+    }
+    int n, m;
+    do {
+        show_polys();
+        printf("請選擇第一個多項式(1~%ld):", polys.size());
+        while(readline() == 0);
+        n = strtol(buf, NULL, 10);
+        if(n > 0 && n <= polys.size()) break;
+
+        printf("超出輸入範圍,請重新輸入\n");
+    } while(1);
+    do {
+        show_polys();
+        printf("請選擇第二個多項式(1~%ld):", polys.size());
+        while(readline() == 0);
+        m = strtol(buf, NULL, 10);
+        if(m > 0 && m <= polys.size()) break;
+
+        printf("超出輸入範圍,請重新輸入\n");
+    } while(1);
+    Poly result = get_poly(n-1) + get_poly(m-1);
+    printf("相加後結果為: %s\n", result.str().c_str());
+    printf("是否儲存結果? (Y/n): ");
+    readline();
+
+    if(*buf == 'n') return;
+    save_poly(result);
+    printf("儲存成功\n");
+}
+
+void (*functions[8])() = {enter_poly, show_polys, show_coef, add_term, remove_term};
+//void (*functions[1])() = {enter_poly};
 
 int main_menu() {
 	CLS();
@@ -134,10 +194,10 @@ int main_menu() {
 }
 
 int main( ){
-	// while(main_menu());
-	readline();
-	Poly p = buf;
-	printf("%s\n", p.str().c_str());
-	auto pp = make_tuple(p);
+	 while(main_menu());
+//	readline();
+//	Poly p = Poly(buf);
+//	printf("%s\n", p.str().c_str());
+//	auto pp = make_pair(p, "");
 	return 0;
 }

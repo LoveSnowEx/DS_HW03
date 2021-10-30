@@ -19,11 +19,14 @@ public:
 	bool sorted;
 	stringstream ss;
 
-	Poly() : size(0), sorted(true), ss("") {}
+	Poly() : size(0), sorted(false) {}
 
-	// Poly(Poly &poly) : size(size), sorted(sorted) {}
+	 Poly(const Poly &other) {
+         if(this == &other) return;
+         *this = other;
+    }
 
-	Poly(char *s) : size(0), sorted(true) {
+	Poly(char *s) {
 		*this = Poly();
 		do {
 			int f = 1, coef = 0, expo = 0;
@@ -61,12 +64,11 @@ public:
 			printf("coef: %d\n", coef);
 			printf("expo: %d\n", expo);
 		} while(*s == '+' || *s == '-');
-		sorted = false;
 		if(*s != '\0') {
 			*this = Poly();
 			throw -1;
-			return;
 		}
+        sorted = false;
 	}
 
 	void sort_elem() {
@@ -82,7 +84,7 @@ public:
 			}
 		}
 		size = i+1;
-		while(terms[size-1].coef == 0) size--;
+		while(size && terms[size-1].coef == 0) size--;
 		for(int i = 0; i < size; i++) {
 			if(terms[i].coef == 0) {
 				swap(terms[i], terms[size-1]);
@@ -141,7 +143,7 @@ public:
 	}
 
 	friend Poly operator+(const Poly &lhs, const Poly &rhs) {
-		Poly res;
+		Poly res = Poly();
 		for(int i = 0; i < lhs.size; i++) {
 			res.terms[res.size++] = lhs.terms[i];
 		}
@@ -151,7 +153,13 @@ public:
 		return res;
 	}
 
-	Poly &operator=(char *s) {
-		return *this =  Poly(s);
-	}
+    Poly &operator=(const Poly &other) {
+        if(this == &other) return *this;
+        for(int i = 0; i < other.size; i++) this->terms[i] = other.terms[i];
+        this->size = other.size;
+        this->sorted = other.sorted;
+        this->ss.str(other.ss.str());
+        return *this;
+    }
+
 };

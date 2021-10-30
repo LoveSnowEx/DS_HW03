@@ -1,0 +1,3 @@
+run="g++ -std=c++17 -o main main.cpp && ./main"
+#run="g++ -std=c++17 -o main main.cpp && ./main < in.txt > out.txt"
+#run="python r.py && g++ -std=c++17 -o main main.cpp && ./main < in.txt"

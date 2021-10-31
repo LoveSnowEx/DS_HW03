@@ -60,6 +60,7 @@ void enter_poly() {
 		}
 	}
 }
+
 void show_polys() {
 	printf("顯示多項式列表: \n");
 	for(int i = 0; i < polys.size(); i++) {
@@ -275,16 +276,25 @@ void poly_div() {
 	printf("儲存成功\n");
 }
 
-void (*functions[9])() = {enter_poly, show_polys, show_coef, add_term, remove_term, poly_add, poly_sub, poly_mul, poly_div};
-//void (*functions[1])() = {enter_poly};
+void (*functions[9])() = {
+	enter_poly,
+	show_polys,
+	show_coef,
+	add_term,
+	remove_term,
+	poly_add,
+	poly_sub,
+	poly_mul,
+	poly_div
+};
 
 int main_menu() {
 	CLS();
 	printf("%s", main_hint);
 	while(readline() == 0);
-	int flag = strtol(buf, NULL, 10);
-	if(flag > 0 && flag < 10) {
-		(*functions[flag - 1])();
+	int opt = strtol(buf, NULL, 10);
+	if(opt > 0 && opt < 10) {
+		(*functions[opt - 1])();
 		PAUSE();
 		return 1;
 	} else {

@@ -91,8 +91,8 @@ public:
 
 			if(coef == 0) continue;
 			add_term(f*coef, expo);
-			printf("coef: %d\n", coef);
-			printf("expo: %d\n", expo);
+			// printf("coef: %d\n", coef);
+			// printf("expo: %d\n", expo);
 		} while(*s == '+' || *s == '-');
 		if(*s != '\0') {
 			*this = Poly();
